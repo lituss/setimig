@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 /**
  *
@@ -21,16 +23,17 @@ public class PlayerScreen extends Player implements Screen {
    SpriteBatch batch = new SpriteBatch();
     //private Texture cards;
    //Array<Card> carta = new Array<Card>();
- 
+  boolean timerUp = false;
    
     
     public PlayerScreen(Setimig g, int credit){
         game = g;
+        cards = new Cards();
         index = g.getPlayers().add(this);
         g.calculaPos();
         croupier = new Croupier(g);
         deltay = (int)Card.getAlt()/4;
-        cards = new Cards();
+        nom = "Carles";
 /*    
         Card aux;
         for ( int f = 1 ; f < 10 ; f++){
@@ -41,10 +44,41 @@ public class PlayerScreen extends Player implements Screen {
 */
     }
     void dinamica(float delta){
+        boolean dinamica = false;
         for (Card card : game.dynamicCards.getCards()){
             if (!card.novaPosicio(delta)) game.dynamicCards.popCard(card);
-            
+            else dinamica = true; 
         }
+        game.dinamica = dinamica;
+        if (!dinamica && !timerUp){
+            timerUp = true;
+            Timer.schedule(new Task(){
+                @Override
+                public void run() {
+                canviEstat();
+                }
+            }, 3);
+        }
+    }
+        private void canviEstat(){
+            Gdx.app.log("sim", game.estat.toString());
+            timerUp = false;
+            switch (game.estat){
+                case Inici : 
+                    game.estat = Estats.PreSorteigBanca;
+                    croupier.preSorteigBanca();
+                break;
+                case SorteigBanca : 
+                    game.estat = Estats.FiSorteigBanca;
+                    croupier.generaLListaFinalistes();
+                    break;
+                case LListaFinalistes:
+                    game.estat = Estats.FiLListaFinalistes;
+                    croupier.evaluaBanca();
+                    break;
+                case BancaAssignada:
+                    
+            }
     }
     @Override
     public void show() {
@@ -60,7 +94,10 @@ public class PlayerScreen extends Player implements Screen {
         batch.begin();
         for (Card c : croupier.getDeck().getCards())c.draw(batch);
         for (Player player : game.getPlayers().getPlayers())
-            for(Card c : player.returnCards()) c.draw(batch);
+            for(Card c : player.returnCards()) {
+                c.draw(batch);
+                c.echo();
+            }
         batch.end();
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -111,18 +148,19 @@ public class PlayerScreen extends Player implements Screen {
     
         switch(jugada){
             case CartaDestapada :
-                cards.putCard(croupier.getCard());
+                cards.putCard(croupier.getCard(),posiciox,posicioy,720,3);
+                posicioy-=deltay;
+                break;
             case CartaTapada :
                 cards.tapa(false);
-                cards.putCard (croupier.getHiddenCard());
-          
+                cards.putCard (croupier.getHiddenCard(),posiciox,posicioy,720,3);
+                posicioy-=deltay;
                     
-                
                 if (cards.getValor() > 7.5f) estat = Jugada.Passa;
                 else
                     if (cards.getValor() < 5 ) estat = Jugada.CartaTapada;
                         else estat = Jugada.Planta;
-                
+                break;
         }
         return estat;
     }
