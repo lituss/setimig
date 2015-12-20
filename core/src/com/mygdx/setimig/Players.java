@@ -19,7 +19,7 @@ public class Players {
     
     public Player next(Player player){
         int index = players.indexOf(player, true)+1;
-        if ( index > players.size) index = 0;
+        if ( index >= players.size) index = 0;
         return players.get(index);
     }
     

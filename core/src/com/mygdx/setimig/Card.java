@@ -6,8 +6,13 @@
 package com.mygdx.setimig;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.litus.util.Observable;
 
 /**
  *
@@ -23,14 +28,17 @@ public class Card extends Sprite{
     private int numero;
     private boolean tapada;
     private static Setimig game;
+    static float specialX,specialY;
+    static Texture marca;
+    public Observable obs;
+ 
     
     public static void posaGame(Setimig g){game = g;}
     
     public Card(Pal pal,int numero,boolean tapada,int posx,int posy){
         super(cards);
-        
         float aux,x,y;
-        
+        obs = new Observable();
         /*if (nCards == 0){
             cards = new Texture(Gdx.files.internal("BarajaE.jpg"));
         }*/
@@ -40,6 +48,14 @@ public class Card extends Sprite{
         this.tapada = tapada;
         imatge();
         setPosition(posx,posy);
+        setRotation(90);
+        if (id == 1){
+            Pixmap pixmap = new Pixmap((int)offsetX,(int)offsetY,Format.RGBA8888);
+            pixmap.setColor(0.39f,0.39f,0.39f,0.5f);
+            pixmap.fillRectangle(0, 0, (int)offsetX,(int)offsetY);
+            marca = new Texture (pixmap);
+            pixmap.dispose();
+            }
     }
     public void tapa(boolean tapada){
         if (this.tapada != tapada){
@@ -49,10 +65,10 @@ public class Card extends Sprite{
     }
     private  void imatge(){
         float aux,x,y;
-        aux = (tapada ? 69 : pal.valor()*12+(getNumero() - 1));
+        aux = (tapada ? 69 : getPal().valor()*12+(getNumero() - 1));
         x = (aux % 10)*offsetX;
         y = ((int)(aux / 10)) * offsetY;
-        Gdx.app.log("x,y : ", String.valueOf(x)+ " "+String.valueOf(y));
+        //Gdx.app.log("x,y : ", String.valueOf(x)+ " "+String.valueOf(y));
         setRegion(Math.round(x),Math.round(y),(int)offsetX,(int)offsetY);
         //setRegion(0,300,offsetX,offsetY);
         //setPosition(0,0);
@@ -83,15 +99,19 @@ public class Card extends Sprite{
 
     private boolean dinamica = false;
     private float xf,yf,anglef,vx,vy,w,dt; // x final y final velocidad x velocidad y velocitat de rotacio i temps per arribar al desti dt
-    static private final float precisio = 4.f;
+    static private final float precisio = 2.f;
 
-    public boolean novaPosicio(float delta){
+    public  synchronized boolean novaPosicio(float delta){
 		float x = getX(),y=getY();
 		if (dinamica){
 			if ((Math.abs(x - xf) < precisio) && (Math.abs(y - yf) < precisio)){
 				dinamica = false;
 				setRotation(anglef);
 				setPosition(xf, yf);
+                                if (this.numero == 10)
+                                    Gdx.app.log("","activa debug");
+                                obs.setChanged();
+                                obs.notifyObservers();
 			}
 			else{
 				x+=vx*delta;
@@ -102,7 +122,7 @@ public class Card extends Sprite{
 			//info();
 			//return true;
 		}
-                echo();
+                //echo();
 		return dinamica;	
 	}
 	public void marcaNovaPosicio(float x, float y , float anglef, float temps){
@@ -117,10 +137,37 @@ public class Card extends Sprite{
 		
 		dinamica = true;
                 game.dynamicCards.putCard(this);
-                game.dinamica = true;
-		//Gdx.app.log("litus", "x,y,xf,yf,vx,vy : "+getX()+","+getY()+","+xf+","+yf+","+vx+","+vy);
+                //game.dinamica = true;
+		Gdx.app.log("litus", "x,y,xf,yf,vx,vy :: temps : "+getNumero()+" "+getPal()+" -> "+getX()+","+getY()+","+xf+","+yf+","+vx+","+vy+" :: "+temps);
 	}
         public void echo(){
             System.out.print("id : x, y -> "+id+" : "+getX()+" , "+getY()+"\n");
         }
+        
+        
+        
+        public void specialMark(){
+           
+        float aux;
+        aux = getPal().valor()*12+(getNumero() - 1);
+        specialX = (aux % 10)*offsetX;
+        specialY = ((int)(aux / 10)) * offsetY;
+        
+        }
+        //Gdx.app.log("x,y : ", String.valueOf(x)+ " "+String.valueOf(y));
+        public void specialDraw(SpriteBatch batch){
+        setRegion(Math.round(specialX),Math.round(specialY),(int)offsetX,(int)offsetY);
+        draw(batch);
+        if (tapada && getX() == xf && getY() == yf) batch.draw(marca, this.getX(), this.getY());
+      
+        //setSize((int)offsetX,(int)offsetY);
+        //setOriginCenter();
+        }
+
+    /**
+     * @return the pal
+     */
+    public Pal getPal() {
+        return pal;
+    }
 }

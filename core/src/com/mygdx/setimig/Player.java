@@ -29,7 +29,7 @@ public abstract class Player {
     
     public abstract Jugada juga(); 
 
-    public abstract Jugada juga(Jugada jugada);
+    public abstract Jugada juga(Jugada jugada,float lapsse);
 
     public Card getCard() {return cards.getCard();}
     
@@ -59,15 +59,20 @@ public abstract class Player {
     public void setApostaTotal(int value){
         apostaTotal = value;
     };
+    public Card jugaSorteig(){
+        Card card = croupier.getCard();
+        cards.putCard(card,posiciox,posicioy,720,3);
+        return card;
+    }
     
-    public void liquida() {
+    public void liquida(Player player) {
         float valor,valorAdversari;
         boolean guanyo;
         int valorPagament=0;
         
         valor = cards.getValor();
-        Player player = game.getPlayers().next(this);
         valorAdversari = player.getValueCards();
+        player.destapa();
         if (valorAdversari > 7.5) guanyo = true;
         else
             if (valorAdversari > valor) guanyo = false;
@@ -84,9 +89,14 @@ public abstract class Player {
             credit -=valorPagament;
             player.guanyaAposta(valorPagament);
         }
-        else
+        else{
             player.guanyaAposta(credit);
-            credit = 0;      
+            credit = 0;
+        }
+    }
+    
+    void destapa(){
+        cards.tapa(false);
     }
 
     //public void rebCarta(Card card){

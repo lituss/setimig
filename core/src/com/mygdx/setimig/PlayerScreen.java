@@ -23,7 +23,8 @@ public class PlayerScreen extends Player implements Screen {
    SpriteBatch batch = new SpriteBatch();
     //private Texture cards;
    //Array<Card> carta = new Array<Card>();
-  boolean timerUp = false;
+  //boolean timerUp = false;
+  private Card  specialCard;
    
     
     public PlayerScreen(Setimig g, int credit){
@@ -43,14 +44,17 @@ public class PlayerScreen extends Player implements Screen {
         }
 */
     }
-    void dinamica(float delta){
+    synchronized void dinamica(float delta){
         boolean dinamica = false;
         for (Card card : game.dynamicCards.getCards()){
             if (!card.novaPosicio(delta)) game.dynamicCards.popCard(card);
-            else dinamica = true; 
+            else{ 
+                dinamica = true;
+                if (game.estat == Estats.BancaAssignada) Gdx.app.log("sim","Dinamica true : "+card.getNumero()+" - "+card.getPal()+ "( "+card.getX()+" , "+card.getY());
+            }
         }
-        game.dinamica = dinamica;
-        if (!dinamica && !timerUp){
+        game.setDinamica(dinamica);
+        /*if (!dinamica && !timerUp){
             timerUp = true;
             Timer.schedule(new Task(){
                 @Override
@@ -58,18 +62,21 @@ public class PlayerScreen extends Player implements Screen {
                 canviEstat();
                 }
             }, 3);
-        }
+        }*/
     }
         private void canviEstat(){
             Gdx.app.log("sim", game.estat.toString());
-            timerUp = false;
+            //timerUp = false;
             switch (game.estat){
                 case Inici : 
                     game.estat = Estats.PreSorteigBanca;
                     croupier.preSorteigBanca();
                 break;
-                case SorteigBanca : 
-                    game.estat = Estats.FiSorteigBanca;
+                /*case SorteigBanca : 
+                    //game.estat = Estats.FiSorteigBanca;
+                    croupier.preGeneraLListaFinalistes();
+                    break;*/
+                case GeneraLListaFinalistes :
                     croupier.generaLListaFinalistes();
                     break;
                 case LListaFinalistes:
@@ -77,6 +84,27 @@ public class PlayerScreen extends Player implements Screen {
                     croupier.evaluaBanca();
                     break;
                 case BancaAssignada:
+                    croupier.reparteix();
+                    break;
+                case CartesRepartides:
+                    croupier.juga();
+                    break;
+                case Aposta :
+                    croupier.juga2();
+                    break;
+                case Juga :
+                    croupier.juga();
+                    break;
+                case Juga2 :
+                    croupier.juga2();
+                    break;
+                case BancaDestapa :
+                case BancaJuga :
+                    croupier.bancaJuga();
+                    break;
+                case BancaLiquida :
+                    croupier.bancaLiquida();
+                    
                     
             }
     }
@@ -95,8 +123,10 @@ public class PlayerScreen extends Player implements Screen {
         for (Card c : croupier.getDeck().getCards())c.draw(batch);
         for (Player player : game.getPlayers().getPlayers())
             for(Card c : player.returnCards()) {
-                c.draw(batch);
-                c.echo();
+                if (c == specialCard) c.specialDraw(batch);
+                else
+                    c.draw(batch);
+                //c.echo();
             }
         batch.end();
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -109,12 +139,12 @@ public class PlayerScreen extends Player implements Screen {
 
     @Override
     public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -137,23 +167,27 @@ public class PlayerScreen extends Player implements Screen {
     }
 
     public Jugada juga() {
-        
-        if (cards.getValor()<5) estat = juga(Jugada.CartaTapada);
-        else estat = Jugada.Planta;
+        if (cards.getValor()<5) estat = Jugada.CartaTapada;
+        else 
+            if (cards.getValor() > 7.5) estat = Jugada.Planta;
+            else estat = Jugada.Planta;
         return estat;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Jugada juga(Jugada jugada) {
+    public Jugada juga(Jugada jugada,float lapse) {
+    Card auxCard;
     
         switch(jugada){
             case CartaDestapada :
-                cards.putCard(croupier.getCard(),posiciox,posicioy,720,3);
+                cards.putCard(croupier.getCard(),posiciox,posicioy,720,lapse);
                 posicioy-=deltay;
                 break;
             case CartaTapada :
                 cards.tapa(false);
-                cards.putCard (croupier.getHiddenCard(),posiciox,posicioy,720,3);
+                specialCard = croupier.getHiddenCard();
+                specialCard.specialMark();
+                cards.putCard (specialCard,posiciox,posicioy,720,lapse);
                 posicioy-=deltay;
                     
                 if (cards.getValor() > 7.5f) estat = Jugada.Passa;

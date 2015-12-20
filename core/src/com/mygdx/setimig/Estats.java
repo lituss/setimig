@@ -9,7 +9,7 @@ package com.mygdx.setimig;
  *
  * @author Carles
  */
-public enum Estats {Inici,PreSorteigBanca,SorteigBanca,FiSorteigBanca,LListaFinalistes,
-FiLListaFinalistes,BancaAssignada,CartesRepartides,Aposta,Juga,Juga2,BancaDestapa,Banca,
-BancaJuga,BancaLiquida,FinalTimba    
+public enum Estats {Inici,PreSorteigBanca,SorteigBanca,PostSorteigBanca,FiSorteigBanca,PreGeneraLListaFinalistes,
+GeneraLListaFinalistes,LListaFinalistes,FiLListaFinalistes,BancaAssignada,Reparteix2,CartesRepartides,Aposta,Juga,Juga2,Juga3,BancaDestapa,
+Banca,BancaJuga,BancaLiquida,FinalTimba    
 }

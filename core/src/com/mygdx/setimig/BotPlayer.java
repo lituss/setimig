@@ -6,6 +6,7 @@
 package com.mygdx.setimig;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -34,32 +35,28 @@ public class BotPlayer extends Player{
 
     @Override
     public Jugada juga() {
-        
-        if (cards.getValor()<5) estat = juga(Jugada.CartaTapada);
-        else estat = Jugada.Planta;
+      Gdx.app.log("sim","Valor : "+cards.getValor());
+        if (cards.getValor()<5) estat = Jugada.CartaTapada;
+        else 
+            if (cards.getValor() > 7.5) estat = Jugada.Passa;
+            else estat = Jugada.Planta;
         return estat;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Jugada juga(Jugada jugada) {
+    public Jugada juga(Jugada jugada,float lapse) {
     
         switch(jugada){
             case CartaDestapada :
-                cards.putCard(croupier.getCard(),posiciox,posicioy,720,3);
+                cards.putCard(croupier.getCard(),posiciox,posicioy,720,lapse);
                 posicioy-=deltay;
                 break;
             case CartaTapada :
                 cards.tapa(false);
-                cards.putCard (croupier.getHiddenCard(),posiciox,posicioy,720,3);
+                cards.putCard (croupier.getHiddenCard(),posiciox,posicioy,720,lapse);
                 posicioy-=deltay;
-                    
-                if (cards.getValor() > 7.5f) estat = Jugada.Passa;
-                else
-                    if (cards.getValor() < 5 ) estat = Jugada.CartaTapada;
-                        else estat = Jugada.Planta;
-                break;
         }
-        return estat;
+        return juga();
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

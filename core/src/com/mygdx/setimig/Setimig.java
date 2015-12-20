@@ -18,7 +18,7 @@ public class Setimig extends Game {
         public int maxAmount;
         public int amount;
         public Cards dynamicCards = new Cards();
-        public boolean dinamica = false;
+        private boolean dinamica = false;
         public Estats estat;
         // end globals
 	
@@ -66,4 +66,19 @@ public class Setimig extends Game {
             */
             super.render();
 	}
+
+    /**
+     * @return the dinamica
+     */
+    public boolean isDinamica() {
+        return dinamica;
+    }
+
+    /**
+     * @param dinamica the dinamica to set
+     */
+    public void setDinamica(boolean dinamica) {
+        if (this.dinamica != dinamica) Gdx.app.log("", "canvi dinamica : "+dinamica);
+        this.dinamica = dinamica;
+    }
 }

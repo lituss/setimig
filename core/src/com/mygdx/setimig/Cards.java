@@ -38,7 +38,7 @@ public class Cards {
     public Card getHiddenCard(){return get(true);}
     public Array <Card> getCards(){return cards;}
     public void putCard(Card card){
-        setValor(card.getNumero()< 10? card.getNumero() : 0.5f); 
+        setValor(getValor() +(card.getNumero()< 10? card.getNumero() : 0.5f)); 
         cards.add(card);
     }
     public void putCard(Card card,int posx,int posy, float angle,float temps){
@@ -47,14 +47,17 @@ public class Cards {
     }
     public void popCard(Card card){
         cards.removeIndex(cards.indexOf(card, true));
+        setValor(getValor() -(card.getNumero()< 10? card.getNumero() : 0.5f));
     }
-    public Card viewCard(){return cards.get(0);}
+    public Card viewCard(){return (cards.size > 0 ? cards.get(0) : null);}
     
     private void genCards(){
         cards.clear();
         switch (tipus){
         case 40:
             for ( Pal pal : EnumSet.allOf(Pal.class))
+            if (pal == Pal.Tapada) continue;
+            else
                 for (int f = 1 ; f < 13 ; f++)
                     if (f != 8 && f!= 9){ 
                         cards.add(new Card(pal,f,true,posx,(int)posy));
@@ -71,6 +74,7 @@ public class Cards {
         Card auxCard = cards.first();
         cards.removeValue(auxCard, true);
         if (!hidden) auxCard.tapa(false);
+        setValor(getValor() -(auxCard.getNumero()< 10? auxCard.getNumero() : 0.5f));
         return auxCard;
     }
 
@@ -90,5 +94,11 @@ public class Cards {
     
     public void tapa(boolean tapada){
         for (Card card : cards) card.tapa(tapada);
+    }
+    public void mou(int x, int y,float delta){
+        for (Card card : cards){
+            card.marcaNovaPosicio(x,y, 90, delta);
+            delta+=0.1;
+        }
     }
 }
