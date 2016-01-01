@@ -28,7 +28,7 @@ public class PlayerScreen extends Player implements Screen {
   private Card  specialCard;
    
     public String nom(){return nom;}
-    public PlayerScreen(Setimig g, int credit){
+    public PlayerScreen(Setimig g, int credit, int apostaMaxima){
         game = g;
         nom = "Carles";
         cards = new Cards();

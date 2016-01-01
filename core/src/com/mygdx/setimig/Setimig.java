@@ -3,12 +3,14 @@ package com.mygdx.setimig;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.mygdx.screens.InitialScreen;
 
 /*public class setimig extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -42,6 +44,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
             private boolean dinamica = false;
             public Estats estat;
             public Skin skin;
+            private Screen currentScreen,nextScreen;
 
             // end globals
 
@@ -51,6 +54,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
             public void calculaPos(){players.calculaPos();}
             public Players getPlayers(){return players;}
             public int maxAmount(){return maxAmount;}
+            public void canviaPantalla(Screen newScreen){nextScreen = newScreen;}
+            public void iniciaJoc(int numPlayers,int credit,int apostaMaxima){
+                players = new Players(this);
+                Card.posaGame(this);
+                for ( int f = 0 ; f < numPlayers ; f++) players.add(new BotPlayer(this,credit,apostaMaxima));
+                Player player = new PlayerScreen(this,credit,apostaMaxima);
+                canviaPantalla((PlayerScreen)player);
+            }
 
             @Override
         public void create () {
@@ -61,16 +72,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
                     estat = Estats.Inici;
                     Player.stage = new Stage();
                     this.skin = new Skin(Gdx.files.internal("uiskin.json"));
+                    currentScreen = new InitialScreen(this);
+                    nextScreen = currentScreen;
+                    setScreen(new InitialScreen(this));
+                    // aixo es fara desde altres finestres
+                /*
                     players = new Players(this);
                     Card.posaGame(this);
                     for ( int f = 0 ; f < numPlayers - 1; f++) players.add(new BotPlayer(this,amount));
                     player = new PlayerScreen(this,amount);
+                    this.setScreen((PlayerScreen)player);
+                    */
                     //players.add(player);
 
             //batch = new SpriteBatch();
             //img = new Texture("badlogic.jpg");
                     //this.setScreen(new LoginScreen(this));
-                    this.setScreen((PlayerScreen)player);
+
                     /*
                     img = new Texture(Gdx.files.internal("BarajaE5.png"));
                     int dx,dy,x,y;
@@ -89,6 +107,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
             batch.draw(reg, 0, 0);
             batch.end();
                 */
+                if (currentScreen != nextScreen) {
+                    currentScreen = nextScreen;
+                    setScreen(nextScreen);
+                }
                 super.render();
         }
 

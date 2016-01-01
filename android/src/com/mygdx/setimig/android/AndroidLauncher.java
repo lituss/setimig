@@ -13,6 +13,7 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		getWindow().addFlags((WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON));
+		//config.useGLSurfaceView20API18 = false;
 		initialize(new Setimig(), config);
 	}
 }

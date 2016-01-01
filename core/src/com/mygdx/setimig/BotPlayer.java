@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class BotPlayer extends Player{
    
-    public BotPlayer(Setimig g,int credit){
+    public BotPlayer(Setimig g,int credit,int apostaMaxima){
     game = g;
     this.credit = credit;
     //index = g.getPlayers().add(this);
