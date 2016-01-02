@@ -54,7 +54,8 @@ public class InitialScreen implements Screen {
         crearMulti.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button) {
-                crearMulti.setText("Ups, encara no rula! ");
+                //crearMulti.setText("Ups, encara no rula! ");
+                game.canviaPantalla(new ConnectScreen(game));
             }
         });
         crearMulti.getLabel().setFontScale(escala);

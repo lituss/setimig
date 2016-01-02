@@ -44,8 +44,8 @@ public class Single implements Screen {
         credit.setFontScale(escala);
         aposta = new Label("Aposta maxima",skin);
         aposta.setFontScale(escala);
-        iNom = new TextField("Pakita",skin);
-        iNom.setScale(escala);
+        iNom = new TextField(game.prefs.getString("nomSingle","Pakita"),skin);
+        iNom.scaleBy(escala);
         iCredit = new TextField("100",skin);
         iCredit.setScale(escala);
         iAposta = new TextField("10",skin);
@@ -90,14 +90,12 @@ public class Single implements Screen {
                 numPlayers = Integer.valueOf(iNum.getText());
                 credit = Integer.valueOf(iCredit.getText());
                 maximaAposta = Integer.valueOf(iAposta.getText());
+                game.prefs.putString("nomSingle",iNom.getText());
 
                 game.iniciaJoc(Integer.valueOf(iNum.getText()),Integer.valueOf(iCredit.getText()),Integer.valueOf(iAposta.getText()));
             }
         });
         stage.addActor(table);
-
-
-
     }
 
     @Override

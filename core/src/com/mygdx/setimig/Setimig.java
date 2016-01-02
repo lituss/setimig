@@ -1,9 +1,6 @@
 package com.mygdx.setimig;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -45,6 +42,7 @@ import com.mygdx.screens.InitialScreen;
             public Estats estat;
             public Skin skin;
             private Screen currentScreen,nextScreen;
+            public Preferences prefs;
 
             // end globals
 
@@ -70,6 +68,7 @@ import com.mygdx.screens.InitialScreen;
                     maxAmount = 10;
                     amount = 100;
                     estat = Estats.Inici;
+                    prefs = Gdx.app.getPreferences("Setimig");
                     Player.stage = new Stage();
                     this.skin = new Skin(Gdx.files.internal("uiskin.json"));
                     currentScreen = new InitialScreen(this);
