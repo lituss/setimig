@@ -23,6 +23,7 @@ public class llistaJocsScreen implements Screen {
     Skin skin;
     float escala = 2f;
     Array<String> aJocs;
+    TextButton crear,unirse;
     public llistaJocsScreen (Setimig g){
         game = g;
         skin = g.skin;
@@ -33,7 +34,7 @@ public class llistaJocsScreen implements Screen {
         table = new Table();
         Label titol,subtitol,columnesNom,columnesJugadors,columnesCredit,columnesMaximaAposta;
 
-        TextButton crear,unirse;
+        
 
 
         titol = new Label("Set i mig",skin);
@@ -50,7 +51,7 @@ public class llistaJocsScreen implements Screen {
         columnesMaximaAposta.setScale(escala);
 
         List jocs = new List(skin);
-        jocs.
+        //jocs.add(aJocs);
 
         crear = new TextButton("Crear joc",skin);
         crear.getLabel().setScale(escala);
@@ -76,26 +77,17 @@ public class llistaJocsScreen implements Screen {
         hg.addActor(columnesCredit);
         hg.addActor(columnesMaximaAposta);
 
-        table.add(nom).right().padRight(10);
-        table.add(iNom);
-        table.row();
-
-        table.add(pass).right().padRight(10);
-        //table.add(oNum).center();
-        table.add(iPass);
-
-        table.row();
-        table.add(conecta).center().fill().pad(30);
+        
         table.row();
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        conecta.addListener(new ClickListener() {
+        crear.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button) {
                 int numPlayers,credit,maximaAposta;
 
-                game.prefs.putString("nomMulti",iNom.getText());
-                game.prefs.putString("passMulti",iPass.getText());
+                //game.prefs.putString("nomMulti",iNom.getText());
+                //game.prefs.putString("passMulti",iPass.getText());
 
                 // game.iniciaJoc(Integer.valueOf(iNum.getText()),Integer.valueOf(iCredit.getText()),Integer.valueOf(iAposta.getText()));
             }
